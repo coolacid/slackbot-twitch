@@ -34,14 +34,10 @@ slack.on('open', function () {
        console.log('As well as: ' + groups.join(', '));
     }
 
-
 //    channel_general = slack.getChannelByName("general")
 //    channel_general.send("Hey! I've just started again. There may be missing twitch notifications.")
 
 });
-
-//Get current state of streams
-streamer_poll("bacon_donut")
 
 init()
 slack.login();
@@ -94,13 +90,17 @@ function streamer_poll(channel) {
         res.on('end', function() {
             var fbResponse = JSON.parse(body)
             if (fbResponse.stream == null) {
+                if (metadata[channel]["state"] == true) {
+                    console.log (channel + " Streamer offline")
+                    sendslackmessage(channel, "Streamer has gone offline")
+                }
                 metadata[channel]["state"] = false
-                console.log (channel + " Streamer offline")
-                sendslackmessage(channel, "Streamer offline")
             } else {
+                if (metadata[channel]["state"] == false) {
+                    console.log (channel + " Streamer online")
+                    sendslackmessage(channel, "Streamer has gone online")
+                }
                 metadata[channel]["state"] = true
-                console.log (channel + " Streamer online")
-                sendslackmessage(channel, "Streamer Online")
             }
         });
     }).on('error', function(e) {
