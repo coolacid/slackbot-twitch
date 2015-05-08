@@ -6,13 +6,12 @@ var token = '';
 var streamers = ['']
 // metatdata - Stream State
 var metadata = {}
-var channels = {}
 
 var slack = new Slack(token, true, true);
  
 slack.on('open', function () {
 
-    channels = Object.keys(slack.channels)
+    var channels = Object.keys(slack.channels)
         .map(function (k) { return slack.channels[k]; })
         .filter(function (c) { return c.is_member; })
         .map(function (c) { return c.name; });
@@ -62,14 +61,23 @@ function streamer_statuspoll() {
 
 function sendslackmessage (room, message) {
     if (slack.connected) {
-        if (channels.indexOf(room) > 0) {
-            console.log ("#" + room)
-            sChannel = slack.getChannelByName(room)
+      var channels = Object.keys(slack.channels)
+        .map(function (k) { return slack.channels[k]; })
+        .filter(function (c) { return c.is_member; })
+        .map(function (c) { return c.name; });
+ 
+      var groups = Object.keys(slack.groups)
+        .map(function (k) { return slack.groups[k]; })
+        .filter(function (g) { return g.is_open && !g.is_archived; })
+        .map(function (g) { return g.name; });
+
+      if (channels.indexOf(room) > -1 || groups.indexOf(room) > -1) {
+            sChannel = slack.getChannelGroupOrDMByName(room)
             sChannel.send(message)
-        } else {
+      } else {
             sChannel = slack.getChannelByName("apidev") 
             sChannel.send("I need to be invited to: " + room)
-        }
+      }
     }
 }
 
