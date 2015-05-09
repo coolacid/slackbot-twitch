@@ -1,11 +1,19 @@
 var Slack = require('slack-client');
 var http = require('https');
+var irc = require('irc');
  
 var token = '';
 
+var ircbotname = ''
+var ircbotpass = ''
+
+var sendstreamertogeneral = true;
+
 var streamers = ['']
-// metatdata - Stream State
+
+// NOTHING TO EDIT BEYOND HERE
 var metadata = {}
+var ircbotchan = []
 
 var slack = new Slack(token, true, true);
  
@@ -41,10 +49,12 @@ slack.on('open', function () {
 
 init()
 slack.login();
+start_ircbot();
 
 function init() {
     streamers.forEach(function(item) {
         metadata[item] = {}
+        ircbotchan.push("#" + item)
     })
     setInterval(streamer_statuspoll, 10000);
 }
@@ -71,7 +81,7 @@ function sendslackmessage (room, message) {
             sChannel = slack.getChannelGroupOrDMByName(room)
             sChannel.send(message)
       } else {
-            sChannel = slack.getChannelByName("apidev") 
+            sChannel = slack.getChannelByName("dev") 
             sChannel.send("I need to be invited to: " + room)
       }
     }
@@ -92,18 +102,41 @@ function streamer_poll(channel) {
             if (fbResponse.stream == null) {
                 if (metadata[channel]["state"] == true) {
                     console.log (channel + " Streamer offline")
-                    sendslackmessage(channel, "Streamer has gone offline")
+                    sendslackmessage("twitch_" + channel, "Streamer has gone offline")
+                    if (sendstreamertogeneral) sendslackmessage("general", channel + " has gone offline")
                 }
                 metadata[channel]["state"] = false
             } else {
                 if (metadata[channel]["state"] == false) {
                     console.log (channel + " Streamer online")
-                    sendslackmessage(channel, "Streamer has gone online")
+                    sendslackmessage("twitch_" + channel, "Streamer has gone online")
+                    if (sendstreamertogeneral) sendslackmessage("general", channel + " has gone online")
                 }
                 metadata[channel]["state"] = true
             }
         });
     }).on('error', function(e) {
         console.log("Got error: ", e);
+    });
+}
+
+
+function start_ircbot() {
+    // Start the IRC Bot to listen for new subscribers
+    bot = new irc.Client('irc.twitch.tv', ircbotname, {
+        debug: false,
+        channels: ircbotchan,
+        password: ircbotpass
+    });
+
+    bot.addListener('error', function(message) {
+        console.error('ERROR: %s: %s', message.command, message.args.join(' '));
+    });
+
+    bot.addListener('message', function (from, to, message) {
+        if ( from.match(/^twitchnotify$/) ) {
+            sendslackmessage ("twitch_" + to.replace(/^\#/, ''), message)
+            console.log ("from: " + from + "  |  to: " + to + "  |  message: " + message)
+        }
     });
 }
