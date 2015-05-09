@@ -1,0 +1,13 @@
+{
+  "name": "SlackTwichBot",
+  "version": "0.0.3",
+  "main": "tb.js",
+  "description": "A simple nodejs app to do cool things between twitch and slack",
+  "scripts": {
+    "start": "node tb.js"
+  },
+  "dependencies": {
+    "irc": "^0.3.7",
+    "slack-client" : "^1.4.0"
+  }
+}
