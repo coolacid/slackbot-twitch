@@ -1,7 +1,7 @@
 var Slack = require('slack-client');
 var http = require('https');
 var irc = require('irc');
- 
+
 var token = '';
 
 var ircbotname = ''
@@ -54,6 +54,8 @@ start_ircbot();
 function init() {
     streamers.forEach(function(item) {
         metadata[item] = {}
+        metadata[item]["statechange"] = Date.now()
+        metadata[item]["state"] = false
         ircbotchan.push("#" + item)
     })
     setInterval(streamer_statuspoll, 10000);
@@ -100,19 +102,21 @@ function streamer_poll(channel) {
         res.on('end', function() {
             var fbResponse = JSON.parse(body)
             if (fbResponse.stream == null) {
-                if (metadata[channel]["state"] == true) {
+                if (metadata[channel]["state"] == true & (Date.now() - metadata[channel]["statechange"] > 60000)) {
                     console.log (channel + " Streamer offline")
                     sendslackmessage("twitch_" + channel, "Streamer has gone offline")
                     if (sendstreamertogeneral) sendslackmessage("general", channel + " has gone offline")
+		    metadata[channel]["statechange"] = Date.now()
+            	    metadata[channel]["state"] = false
                 }
-                metadata[channel]["state"] = false
             } else {
-                if (metadata[channel]["state"] == false) {
+                if (metadata[channel]["state"] == false & (Date.now() - metadata[channel]["statechange"] > 60000)) {
                     console.log (channel + " Streamer online")
                     sendslackmessage("twitch_" + channel, "Streamer has gone online")
                     if (sendstreamertogeneral) sendslackmessage("general", channel + " has gone online")
+		    metadata[channel]["statechange"] = Date.now()
+		    metadata[channel]["state"] = true
                 }
-                metadata[channel]["state"] = true
             }
         });
     }).on('error', function(e) {
