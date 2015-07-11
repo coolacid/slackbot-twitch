@@ -17,6 +17,8 @@ justinfan with a string of up to 5 numbers and no password creates an anonomous 
 
     "twitch_client_id": "FROM Twitch API Signup",
 
-    "slack_token": "SOME-SOME-KEY"
+    "slack_token": "SOME-SOME-KEY",
+
+    "sendstreamertogeneral": true
 }
 ```

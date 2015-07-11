@@ -5,8 +5,6 @@ var fs = require('fs');
 
 var config = JSON.parse(fs.readFileSync(__dirname + '/config.json', 'utf8'));
 
-var sendstreamertogeneral = true;
-
 var streamers = [];
 config.irc.channels.forEach(function(item) {
     streamers.push(item.substr(1));//clean #
@@ -118,7 +116,7 @@ function streamer_poll(channel) {
             if (metadata[channel]['state'] == true & (Date.now() - metadata[channel]['statechange'] > 60000)) {
                 console.log (channel + ' Streamer offline')
                 sendslackmessage('twitch_' + channel, 'Streamer has gone offline')
-                if (sendstreamertogeneral) sendslackmessage('general', channel + ' has gone offline')
+                if (config.sendstreamertogeneral) sendslackmessage('general', channel + ' has gone offline')
                 metadata[channel]['statechange'] = Date.now()
                 metadata[channel]['state'] = false
                 metadata[channel]['packet'] = null
@@ -128,7 +126,7 @@ function streamer_poll(channel) {
                 console.log (channel + ' Streamer online')
                 sendslackmessage('twitch_' + channel, 'Streamer has gone online')
                 sendslackmessage('twitch_' + channel, 'Title: ' + body.stream.channel.status + 'Game: ' + body.stream.game);
-                if (sendstreamertogeneral) sendslackmessage('general', channel + ' has gone online')
+                if (config.sendstreamertogeneral) sendslackmessage('general', channel + ' has gone online')
                 metadata[channel]['statechange'] = Date.now()
                 metadata[channel]['state'] = true
             }
