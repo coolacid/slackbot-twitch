@@ -81,7 +81,7 @@ function sendslackmessage (room, message) {
             sChannel = slack.getChannelGroupOrDMByName(room)
             sChannel.send(message)
         } else {
-            sChannel = slack.getChannelByName('general')
+            sChannel = slack.getChannelByName('dev')
             sChannel.send('I need to be invited to: ' + room)
         }
     }
