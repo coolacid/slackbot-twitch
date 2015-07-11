@@ -94,7 +94,7 @@ function streamer_poll(channel) {
     request({
         url: 'https://api.twitch.tv/kraken/streams/' + channel,
         headers: {
-            'Client-ID: ' + config.twitch_client_id
+            'Client-ID': config.twitch_client_id
         }
     }, function (error, response, body) {
         if (error) {
