@@ -22,3 +22,15 @@ justinfan with a string of up to 5 numbers and no password creates an anonomous 
     "sendstreamertogeneral": true
 }
 ```
+
+# Channel Commands
+
+Private groups in slack follow the format of #twitch_channelname
+
+In such a private group channel you can run the following commands:
+
+  - !stats
+    - Game: GameName Viewers: Count Started: Time Up: Uptime: 0:00:00
+  - !title
+    - Title: StreamTitle Game: GameName
+
