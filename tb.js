@@ -218,13 +218,20 @@ var convertTime = function(date_future, date_now) {
     var minutes = Math.floor(delta / 60) % 60;
     delta -= minutes * 60;
 
+    if (minutes < 10) {
+        minutes = '0' + minutes;
+    }
+
     // what's left is seconds
-    var seconds = delta % 60;  // in theory the modulus is not required
+    var seconds = Math.floor(delta % 60);  // in theory the modulus is not required
+    if (seconds < 10) {
+        seconds = '0' + seconds;
+    }
 
     packet.days = days;
     packet.hours = hours;
     packet.minutes = minutes;
-    packet.seconds = Math.floor(seconds);
+    packet.seconds = seconds;
 
     return packet;
 }
