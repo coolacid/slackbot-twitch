@@ -125,7 +125,7 @@ function streamer_poll(channel) {
             if (metadata[channel]['state'] == false & (Date.now() - metadata[channel]['statechange'] > 60000)) {
                 console.log (channel + ' Streamer online')
                 sendslackmessage('twitch_' + channel, 'Streamer has gone online')
-                sendslackmessage('twitch_' + channel, 'Title: ' + body.stream.channel.status + 'Game: ' + body.stream.game);
+                sendslackmessage('twitch_' + channel, 'Title: ' + body.stream.channel.status + ' Game: ' + body.stream.game);
                 if (config.sendstreamertogeneral) sendslackmessage('general', channel + ' has gone online')
                 metadata[channel]['statechange'] = Date.now()
                 metadata[channel]['state'] = true
