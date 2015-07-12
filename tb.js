@@ -175,7 +175,7 @@ slack.on('message', function(message) {
                         uptime = timepacket.days + ' days ' + uptime;
                     }
 
-                    sendslackmessage('twitch_' + streamer, 'Game: ' + metadata[streamer]['packet']['game'] + ' Viewers: ' + metadata[streamer]['packet']['game'] + ' Started: ' + metadata[streamer]['packet']['created_at'] + ' Up: ' + uptime);
+                    sendslackmessage('twitch_' + streamer, 'Game: ' + metadata[streamer]['packet']['game'] + ' Viewers: ' + metadata[streamer]['packet']['viewers'] + ' Started: ' + metadata[streamer]['packet']['created_at'] + ' Up: ' + uptime);
                 } else {
                     sendslackmessage('twitch_' + streamer, 'Streamer is not live')
                 }
