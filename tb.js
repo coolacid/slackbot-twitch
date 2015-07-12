@@ -148,7 +148,7 @@ function start_ircbot() {
     });
 
     bot.addListener('message', function (from, to, message) {
-        if ( from.match(/^twitchnotify$/) ) {
+        if ( from.match(/^twitchnotify$/) && message.match(/.*(just subscribed|subscribed for .* in a row)!/) ) {
             sendslackmessage ('twitch_' + to.replace(/^\#/, ''), message)
             console.log ('from: ' + from + '  |  to: ' + to + '  |  message: ' + message)
         }
