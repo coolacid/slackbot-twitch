@@ -134,7 +134,7 @@ function streamer_poll(channel) {
             if (metadata[channel]['state'] == false & (Date.now() - metadata[channel]['statechange'] > 60000)) {
                 console.log (channel + ' Streamer online')
                 sendslackmessage('twitch_' + channel, 'Streamer has gone online')
-                sendslackmessage('twitch_' + channel, 'Title: ' + body.stream.channel.status + 'Game: ' + body.stream.game);
+                sendslackmessage('twitch_' + channel, 'Title: ' + body.stream.channel.status + ' Game: ' + body.stream.game);
                 if (config.sendstreamertogeneral) sendslackmessage('general', channel + ' has gone online')
                 metadata[channel]['statechange'] = Date.now()
                 metadata[channel]['state'] = true
@@ -184,7 +184,7 @@ slack.on('message', function(message) {
                         uptime = timepacket.days + ' days ' + uptime;
                     }
 
-                    sendslackmessage('twitch_' + streamer, 'Game: ' + metadata[streamer]['packet']['game'] + ' Viewers: ' + metadata[streamer]['packet']['game'] + ' Started: ' + metadata[streamer]['packet']['created_at'] + ' Up: ' + uptime);
+                    sendslackmessage('twitch_' + streamer, 'Game: ' + metadata[streamer]['packet']['game'] + ' Viewers: ' + metadata[streamer]['packet']['viewers'] + ' Started: ' + metadata[streamer]['packet']['created_at'] + ' Up: ' + uptime);
                 } else {
                     sendslackmessage('twitch_' + streamer, 'Streamer is not live')
                 }
@@ -233,13 +233,20 @@ var convertTime = function(date_future, date_now) {
     var minutes = Math.floor(delta / 60) % 60;
     delta -= minutes * 60;
 
+    if (minutes < 10) {
+        minutes = '0' + minutes;
+    }
+
     // what's left is seconds
-    var seconds = delta % 60;  // in theory the modulus is not required
+    var seconds = Math.floor(delta % 60);  // in theory the modulus is not required
+    if (seconds < 10) {
+        seconds = '0' + seconds;
+    }
 
     packet.days = days;
     packet.hours = hours;
     packet.minutes = minutes;
-    packet.seconds = Math.floor(seconds);
+    packet.seconds = seconds;
 
     return packet;
 }

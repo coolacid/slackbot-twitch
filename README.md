@@ -35,3 +35,15 @@ justinfan with a string of up to 5 numbers and no password creates an anonomous 
   - slack_token - you are given this at Bot Creation in Slack Integrations
   - sendstreamertogeneral - send online/offline updates to #general
   - offline_toggle - number of minutes to wait before saying channel is offline 3-5 recommended
+
+# Channel Commands
+
+Private groups in slack follow the format of #twitch_channelname
+
+In such a private group channel you can run the following commands:
+
+  - !stats
+    - Game: GameName Viewers: Count Started: Time Up: Uptime: 0:00:00
+  - !title
+    - Title: StreamTitle Game: GameName
+
