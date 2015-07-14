@@ -2,6 +2,7 @@ var Slack = require('slack-client');
 var request = require('request');
 var irc = require('irc');
 var fs = require('fs');
+var crontab = require('node-crontab');
 
 var config = JSON.parse(fs.readFileSync(__dirname + '/config.json', 'utf8'));
 
@@ -52,14 +53,6 @@ function init() {
         metadata[item] = {}
         metadata[item]['statechange'] = Date.now()
         metadata[item]['state'] = false
-    })
-    setInterval(streamer_statuspoll, 10000);
-}
-
-function streamer_statuspoll() {
-//    console.log('polling');
-    streamers.forEach(function(item) {
-        streamer_poll(item)
     })
 }
 
@@ -197,6 +190,12 @@ slack.on('message', function(message) {
     }
 });
 
+/* Cron */
+var jobId = crontab.scheduleJob("* * * * *", function() {
+    streamers.forEach(function(item) {
+        streamer_poll(item)
+    })
+});
 
 /* utility functions */
 var convertTime = function(date_future, date_now) {
