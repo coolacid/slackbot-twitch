@@ -53,6 +53,8 @@ function init() {
         metadata[item] = {}
         metadata[item]['statechange'] = Date.now()
         metadata[item]['state'] = false
+        metadata[item]['offline'] = 0;
+        metadata[item]['packet'] = null
     })
 }
 
@@ -107,14 +109,28 @@ function streamer_poll(channel) {
 
         if (body.stream == null) {
             if (metadata[channel]['state'] == true & (Date.now() - metadata[channel]['statechange'] > 60000)) {
-                console.log (channel + ' Streamer offline')
-                sendslackmessage('twitch_' + channel, 'Streamer has gone offline')
-                if (config.sendstreamertogeneral) sendslackmessage('general', channel + ' has gone offline')
-                metadata[channel]['statechange'] = Date.now()
-                metadata[channel]['state'] = false
-                metadata[channel]['packet'] = null
+                // this looks logically wrong with the -1
+                // but means that 5 is offline for 5 and not 6
+                // since we only incrmement if score is less than 5/config
+                // aka Zero Indexed due to CronTab polling so already offline a minute
+                // when offline count is 0 and this runs
+                if (metadata[channel]['offline'] >= (config.offline_toggle - 1)) {
+                    console.log (channel + ' Streamer offline')
+                    sendslackmessage('twitch_' + channel, 'Streamer has gone offline')
+                    if (config.sendstreamertogeneral) sendslackmessage('general', channel + ' has gone offline')
+                    metadata[channel]['statechange'] = Date.now()
+                    metadata[channel]['state'] = false
+                    metadata[channel]['packet'] = null
+                } else {
+                    // channel not offline long enough
+                    metadata[channel]['offline']++;
+                }
             }
         } else {
+            // always reset this to 0 when stream is online
+            // as offline for say 3/5 and thne back online
+            // so reset the board
+            metadata[channel]['offline'] = 0;
             if (metadata[channel]['state'] == false & (Date.now() - metadata[channel]['statechange'] > 60000)) {
                 console.log (channel + ' Streamer online')
                 sendslackmessage('twitch_' + channel, 'Streamer has gone online')
