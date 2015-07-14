@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "irc": "^0.3.7",
+    "node-crontab": "0.0.8",
     "request": "^2.58.0",
     "slack-client": "^1.4.0"
   }
